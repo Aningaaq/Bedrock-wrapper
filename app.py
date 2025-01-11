@@ -52,6 +52,49 @@ def question_embedding():
   # 3. Return the embedding vector as JSON.
   return jsonify({"embedding": embedding_vector})
 
+PROMPT_TEMPLATE = """You are a text classification model.
+Classify the following text as a question or not.
+If the text is a question, output 'true'. Otherwise, output 'false'.
+
+Text: "{text}"
+Answer:
+"""
+
+def classify_question_bedrock(text):
+  prompt = PROMPT_TEMPLATE.format(text=text)
+  # Invoke the Amazon Titan model (change modelId if desired)
+  response = bedrock.invoke_model(
+      modelId='amazon.titan-tg1-large',
+      contentType='text/plain',
+      accept='text/plain',
+      # body is the prompt we send
+      body=prompt,
+      # Additional parameters to guide the generation
+      # (e.g. limit token output, zero randomness, etc.)
+      maxTokens=2,        # Keep it small to limit the output
+      temperature=0,      # Zero randomness
+      topP=1,             # Use standard decoding
+      stopSequences=["\n"]  # Stop at new line
+  )
+
+  # The response body is a streaming output (a file-like object in boto3)
+  model_output = response['body'].read().decode('utf-8')
+
+  # Strip extra whitespace (and any unexpected text)
+  model_output = model_output.strip()
+
+  # In practice, you might want to post-process or validate
+  # to ensure you only return "true" or "false".
+  return model_output
+
+@app.route("/is-question", method=["GET"])
+def is_question():
+  text = request.args.get("text", default="")
+
+  is_question = classify_question_bedrock(text)
+  
+  return is_question
+
 
 if __name__ == "__main__":
   # It's generally recommended to run via poetry run python -m flask run
