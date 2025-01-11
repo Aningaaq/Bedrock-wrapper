@@ -31,7 +31,8 @@ def get_embeddings_bedrock(text):
 
   # Print out the JSON in a pretty format
   print(json.dumps(response_json, indent=2))
-  embedding_vector = response["embedding"]
+  embedding_vector = response_body["embeddingsByType"]["float"]
+  print("embed vector: ", embedding_vector)
   return embedding_vector
 
 # New route to get embeddings
