@@ -73,8 +73,8 @@ def classify_question_bedrock(text):
   
   response = bedrock.invoke_model(
       modelId='amazon.titan-tg1-large',
-      contentType='text/plain',
-      accept='text/plain',
+      contentType='application/json',
+      accept='application/json',
       body=body
   )
 
