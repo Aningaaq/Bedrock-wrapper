@@ -25,13 +25,14 @@ def get_embeddings_bedrock(text):
     accept=accept, contentType=content_type
   )
 
-  response_body = response["body"].read()  # read the streamed body
-  response_str = response_body.decode("utf-8")  # decode bytes to string
-  response_json = json.loads(response_str)      # parse JSON
+  # response["body"] is a StreamingBody object
+  response_body = response["body"].read()         # Read the stream (bytes)
+  response_str = response_body.decode("utf-8")    # Decode to a string
+  response_json = json.loads(response_str)        # Parse string as JSON
 
-  # Print out the JSON in a pretty format
-  print(json.dumps(response_json, indent=2))
-  embedding_vector = response["body"]["embeddingsByType"]["float"]
+  print("response json : ", response_json)
+  # Now you can access the JSON keys
+  embedding_vector = response_json["embeddingsByType"]["float"]
   print("embed vector: ", embedding_vector)
   return embedding_vector
 
