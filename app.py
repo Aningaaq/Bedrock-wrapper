@@ -64,11 +64,13 @@ def classify_question_bedrock(text):
   prompt = PROMPT_TEMPLATE.format(text=text)
   # Invoke the Amazon Titan model (change modelId if desired)
   body = json.dumps({
-      "prompt": prompt,
-      "maxTokenCount": 2,         # severely limit the length
-      "temperature": 0,          # reduce randomness
-      "topP": 1,                 # typical decoding
-      "stopSequences": ["\n"]    # stop when a newline is encountered
+      "inputText": prompt,
+      "textGenerationConfig": {
+        "maxTokenCount": 2,         # severely limit the length
+        "temperature": 0,          # reduce randomness
+        "topP": 1,                 # typical decoding
+        "stopSequences": ["\n"]    # stop when a newline is encountered
+      }
   })
   
   response = bedrock.invoke_model(
