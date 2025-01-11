@@ -47,4 +47,4 @@ def question_embedding():
 if __name__ == "__main__":
   # It's generally recommended to run via poetry run python -m flask run
   # But for simplicity, we'll just do app.run for this example.
-  app.run(host="0.0.0.0", port=80, debug=True)
+  app.run(host="0.0.0.0", port=5000, debug=True)
