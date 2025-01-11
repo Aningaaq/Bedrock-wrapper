@@ -63,29 +63,36 @@ Answer:
 def classify_question_bedrock(text):
   prompt = PROMPT_TEMPLATE.format(text=text)
   # Invoke the Amazon Titan model (change modelId if desired)
+  body = json.dumps({
+      "prompt": prompt,
+      "maxTokenCount": 2,         # severely limit the length
+      "temperature": 0,          # reduce randomness
+      "topP": 1,                 # typical decoding
+      "stopSequences": ["\n"]    # stop when a newline is encountered
+  })
+  
   response = bedrock.invoke_model(
       modelId='amazon.titan-tg1-large',
       contentType='text/plain',
       accept='text/plain',
-      # body is the prompt we send
-      body=prompt,
-      # Additional parameters to guide the generation
-      # (e.g. limit token output, zero randomness, etc.)
-      maxTokens=2,        # Keep it small to limit the output
-      temperature=0,      # Zero randomness
-      topP=1,             # Use standard decoding
-      stopSequences=["\n"]  # Stop at new line
+      body=body
   )
 
-  # The response body is a streaming output (a file-like object in boto3)
-  model_output = response['body'].read().decode('utf-8')
+  # The response is a streaming body that we read, then parse as JSON
+  raw_output = response['body'].read().decode('utf-8')
+  output_json = json.loads(raw_output)
 
-  # Strip extra whitespace (and any unexpected text)
-  model_output = model_output.strip()
+  # Titan responses typically look like:
+  # {
+  #   "results": [
+  #       {"outputText": "true"}
+  #   ]
+  # }
+  generated_text = output_json["results"][0]["outputText"].strip()
 
-  # In practice, you might want to post-process or validate
-  # to ensure you only return "true" or "false".
-  return model_output
+  # In practice, you might want to ensure the output is strictly 'true' or 'false'
+  # or handle any unexpected text.
+  return generated_text
 
 @app.route("/is-question", methods=["GET"])
 def is_question():
