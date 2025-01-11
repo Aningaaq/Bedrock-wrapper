@@ -24,6 +24,13 @@ def get_embeddings_bedrock(text):
     body=body,
     accept=accept, contentType=content_type
   )
+
+  response_body = response["body"].read()  # read the streamed body
+  response_str = response_body.decode("utf-8")  # decode bytes to string
+  response_json = json.loads(response_str)      # parse JSON
+
+  # Print out the JSON in a pretty format
+  print(json.dumps(response_json, indent=2))
   embedding_vector = response["embedding"]
   return embedding_vector
 
