@@ -69,7 +69,6 @@ def classify_question_bedrock(text):
         "maxTokenCount": 2,         # severely limit the length
         "temperature": 0,          # reduce randomness
         "topP": 1,                 # typical decoding
-        "stopSequences": ["\n"]    # stop when a newline is encountered
       }
   })
   
