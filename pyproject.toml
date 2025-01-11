@@ -1,7 +1,18 @@
 [project]
-name = "python-template"
+name = "Bedrock-Wrapper"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "bedrock wrapper"
+authors = ["Namung Kim <aningaaq1121@gmail.com>"]
 requires-python = ">=3.11"
-dependencies = []
+
+
+[tool.poetry]
+name = "Bedrock-Wrapper"
+version = "0.1.0"
+description = "bedrock wrapper"
+authors = ["Namung Kim <aningaaq1121@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+boto3 = "1.35.76"
+flask = "3.1.0"

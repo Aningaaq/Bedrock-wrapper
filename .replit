@@ -13,3 +13,24 @@ requiredFiles = [".replit", "replit.nix"]
 [deployment]
 run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
+
+[workflows]
+runButton = "run flask app"
+
+[[workflows.workflow]]
+name = "run flask app"
+mode = "sequential"
+author = 17059672
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "export FLASK_APP=app.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "poetry run flask run"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+exposeLocalhost = true
