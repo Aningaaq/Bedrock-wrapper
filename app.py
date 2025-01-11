@@ -87,7 +87,7 @@ def classify_question_bedrock(text):
   # to ensure you only return "true" or "false".
   return model_output
 
-@app.route("/is-question", method=["GET"])
+@app.route("/is-question", methods=["GET"])
 def is_question():
   text = request.args.get("text", default="")
 
