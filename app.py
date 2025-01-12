@@ -205,6 +205,32 @@ def is_explanation():
   }
   return json.dumps(response)
 
+ANSWER_PROMPT_TEMPLATE = """You are a course teaching assistant.
+You will receive questions from students having trouble understanding the course material.
+Write a thorough answer to the question. Write in a kindly manner, in Korean.
+
+Question: "{question}"
+Answer:
+"""
+
+@app.route("/answer", methods=["GET"])
+def answer():
+  question = request.args.get("question", default="")
+  prompt = EXPLANATION_PROMPT_TEMPLATE.format(question=question)
+  # Invoke the Amazon Titan model (change modelId if desired)
+  body = json.dumps({
+      "inputText": prompt,
+  })
+
+  response = bedrock.invoke_model(
+      modelId='amazon.titan-tg1-large',
+      contentType='application/json',
+      accept='application/json',
+      body=body
+  )
+
+  return json.dumps(response)
+
 
 if __name__ == "__main__":
   # It's generally recommended to run via poetry run python -m flask run
