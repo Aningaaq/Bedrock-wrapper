@@ -99,9 +99,11 @@ def classify_question_bedrock(text):
 def is_question():
   text = request.args.get("text", default="")
 
-  is_question = classify_question_bedrock(text)
-  
-  return is_question
+  is_question = True  if classify_question_bedrock(text) == "True" else False
+  response  = {
+    "is_question": is_question
+  }
+  return json.dumps(response)
 
 
 if __name__ == "__main__":
