@@ -231,7 +231,7 @@ def answer():
   # Read and decode the streaming response from Bedrock
   response_body = response["body"].read().decode("utf-8")
 
-  return response_body["results"][0]["outputText"].strip()
+  return response_body[0]["outputText"].strip()
 
 
 if __name__ == "__main__":
