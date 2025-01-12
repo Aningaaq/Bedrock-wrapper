@@ -223,7 +223,7 @@ def answer():
   })
 
   response = bedrock.invoke_model(
-      modelId='amazon.titan-tg1-large',
+      modelId='anthropic.claude-v2',
       contentType='application/json',
       accept='application/json',
       body=body
