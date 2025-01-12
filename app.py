@@ -216,7 +216,7 @@ Answer:
 @app.route("/answer", methods=["GET"])
 def answer():
   question = request.args.get("question", default="")
-  prompt = EXPLANATION_PROMPT_TEMPLATE.format(question=question)
+  prompt = ANSWER_PROMPT_TEMPLATE.format(question=question)
   # Invoke the Amazon Titan model (change modelId if desired)
   body = json.dumps({
       "inputText": prompt,
