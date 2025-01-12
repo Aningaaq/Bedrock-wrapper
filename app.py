@@ -105,6 +105,106 @@ def is_question():
   }
   return json.dumps(response)
 
+SMALLTALK_PROMPT_TEMPLATE = """You are a text classification model.
+Classify the following text as small talk or not.
+If the text is a small talk, output 'true'. Otherwise, output 'false'.
+
+Text: "{text}"
+Answer:
+"""
+
+def classify_smalltalk_bedrock(text):
+  prompt = SMALLTALK_PROMPT_TEMPLATE.format(text=text)
+  # Invoke the Amazon Titan model (change modelId if desired)
+  body = json.dumps({
+      "inputText": prompt,
+      "textGenerationConfig": {
+        "maxTokenCount": 2,         # severely limit the length
+        "temperature": 0,          # reduce randomness
+        "topP": 1,                 # typical decoding
+      }
+  })
+
+  response = bedrock.invoke_model(
+      modelId='amazon.titan-tg1-large',
+      contentType='application/json',
+      accept='application/json',
+      body=body
+  )
+
+  # The response is a streaming body that we read, then parse as JSON
+  raw_output = response['body'].read().decode('utf-8')
+  output_json = json.loads(raw_output)
+
+  # Titan responses typically look like:
+  # {
+  #   "results": [
+  #       {"outputText": "true"}
+  #   ]
+  # }
+  generated_text = output_json["results"][0]["outputText"].strip()
+
+  # In practice, you might want to ensure the output is strictly 'true' or 'false'
+  # or handle any unexpected text.
+  return generated_text
+
+@app.route("/is-smalltalk", methods=["GET"])
+def get_is_smalltalk():
+  text = request.args.get("text", default="")
+
+  is_smalltalk = True  if classify_smalltalk_bedrock(text) == "True" else False
+  response  = {
+    "is_smalltalk": is_smalltalk
+  }
+  return json.dumps(response)
+
+EXPLANATION_PROMPT_TEMPLATE = """You are a text classification model.
+Classify the following text as a explanation or not.
+If the text is a explanation, output 'true'. Otherwise, output 'false'.
+
+Text: "{text}"
+Answer:
+"""
+
+def classify_explanation_bedrock(text):
+  prompt = EXPLANATION_PROMPT_TEMPLATE.format(text=text)
+  # Invoke the Amazon Titan model (change modelId if desired)
+  body = json.dumps({
+      "inputText": prompt,
+      "textGenerationConfig": {
+        "maxTokenCount": 2,         # severely limit the length
+        "temperature": 0,          # reduce randomness
+        "topP": 1,                 # typical decoding
+      }
+  })
+
+  response = bedrock.invoke_model(
+      modelId='amazon.titan-tg1-large',
+      contentType='application/json',
+      accept='application/json',
+      body=body
+  )
+
+  # The response is a streaming body that we read, then parse as JSON
+  raw_output = response['body'].read().decode('utf-8')
+  output_json = json.loads(raw_output)
+
+  generated_text = output_json["results"][0]["outputText"].strip()
+
+  # In practice, you might want to ensure the output is strictly 'true' or 'false'
+  # or handle any unexpected text.
+  return generated_text
+
+@app.route("/is-explanation", methods=["GET"])
+def is_explanation():
+  text = request.args.get("text", default="")
+
+  is_explanation = True  if classify_explanation_bedrock(text) == "True" else False
+  response  = {
+    "is_explanation": is_explanation
+  }
+  return json.dumps(response)
+
 
 if __name__ == "__main__":
   # It's generally recommended to run via poetry run python -m flask run
