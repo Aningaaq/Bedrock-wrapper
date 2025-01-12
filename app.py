@@ -231,12 +231,7 @@ def answer():
   # Read and decode the streaming response from Bedrock
   response_body = response["body"].read().decode("utf-8")
 
-  # If the body is valid JSON, you can load and re-dump it
-  # or simply return it as a string.
-  # Here we assume it's JSON, so we parse and then re-encode to JSON.
-  response_json = json.loads(response_body)
-
-  return json.dumps(response_json)
+  return response_body["results"][0]["outputText"].strip()
 
 
 if __name__ == "__main__":
